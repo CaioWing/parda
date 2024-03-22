@@ -7,9 +7,9 @@ supporting on-the-fly transformations and concurrent data handling.
 
 __version__ = '0.1.0'
 __author__ = 'Caio Wingeter <castilhocaio1164@gmail.com>'
-__all__ = ['DatasetLoader']
+__all__ = ['PardaLoader']
 
 
 from .core import (
-    DatasetLoader
+    PardaLoader
 )

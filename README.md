@@ -1,3 +1,5 @@
+![This is almost a tiger!](artworker/onca.png)
+
 
 # Dataset Configuration Module
 
@@ -31,7 +33,7 @@ Load and Process: Utilize the module's functions to load your dataset according 
 ## Usage/Examples
 
 ```python
-from dataset_loader import DatasetLoader
+from parda import PardaLoader
 
 # Define your dataset
 dataset_definition = """
@@ -48,7 +50,7 @@ dataset "my_dataset" {
 """
 
 # Initialize the loader and load your dataset
-loader = DatasetLoader(dataset_definition)
+loader = PardaLoader(dataset_definition)
 dataset = loader.load_dataset()
 ```
 

@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor
 
-class DatasetLoader:
+class PardaLoader:
     def __init__(self, dataset_definition):
         self.dataset_definition = dataset_definition
         self.dataset_name = ""

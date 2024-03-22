@@ -1,3 +1,3 @@
 from .src import (
-    DatasetLoader
+    PardaLoader
 )
