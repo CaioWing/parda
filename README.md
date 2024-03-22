@@ -1,9 +1,13 @@
-![This is almost a tiger!](artworker/onca.png)
 
 
-# Dataset Configuration Module
+<div align="center">
+  <img src="artworker/onca_prev_ui.png" width="250">
+  <p><strong>Parda:</strong> a Tool for data scientists</p>
+</div>
 
-The Dataset Configuration Module is a versatile and powerful Python library designed to simplify the process of loading, processing, and managing various datasets. Aimed at researchers, data scientists, and developers working with large and complex datasets, this tool provides a seamless and intuitive way to handle data across different formats and structures.
+
+
+The Parda (Parser Dataset) is a versatile and powerful Python library designed to simplify the process of loading, processing, and managing various datasets. Aimed at researchers, data scientists, and developers working with large and complex datasets, this tool provides a seamless and intuitive way to handle data across different formats and structures.
 
 ## Key Features
 
