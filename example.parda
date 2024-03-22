@@ -1,0 +1,20 @@
+dataset "my_dataset" {
+    source_dir = "path/to/dataset"
+    
+    structure {
+        subdir "images" {
+            tagdir "train" {
+                files extension ".jpg"
+            }
+            tagdir "test" {
+                files extension ".jpg"
+            }
+        }
+        
+        subdir "labels" {
+            files extension ".txt"
+        }
+    }
+    
+    output_format = "numpy"
+}
