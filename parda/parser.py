@@ -292,7 +292,6 @@ if __name__ == '__main__':
 
     # Load the dataset
     dataset = loader.load_dataset(generator=False, batch_size=32, shuffle=True, num_workers=4, max_files_per_dir=100)
-    breakpoint()
     # Get dataset information
     info = loader.get_dataset_info()
     print("Dataset Information:")
