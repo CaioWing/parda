@@ -75,11 +75,13 @@ class PardaLoader:
                     context_stack[-1]["tagdirs"].append(current_subdir)  # Add to the last context in the stack
                 context_stack.append(current_subdir)  # Push the current context onto the stack
             elif key == "tagdir":
-                current_tagdir = {"name": value, "type": "tagdir", "labeldirs": [], "files": []}
+                current_tagdir = {"name": value, "type": "tagdir", "labeldirs": [], "files": []} #include subdirectories option
                 context_stack[-1]["tagdirs"].append(current_tagdir)  # Add to the last context in the stack
                 context_stack.append(current_tagdir)  # Push the current context onto the stack
+
             elif key == "labeldir":
-                current_labeldir = {"name": value, "type": "labeldir", "files": []}
+                isd = "isd" in line
+                current_labeldir = {"name": value, "type": "labeldir", "files": [], "isd": isd}
                 context_stack[-1]["labeldirs"].append(current_labeldir)  # Add to the last context in the stack
                 context_stack.append(current_labeldir)  # Push the current context onto the stack
             elif key == "files":
@@ -90,12 +92,13 @@ class PardaLoader:
         self.num_workers = num_workers
         dataset = {}
 
-        def process_files(dir_path, extensions):
+        def process_files(dir_path, extensions, include_subdirs=False):
             file_list = []
-            for file in os.listdir(dir_path):
-                if any(file.endswith(ext) for ext in extensions):
-                    file_path = os.path.join(dir_path, file)
-                    file_list.append(file_path)
+            for root, dirs, files in os.walk(dir_path) if include_subdirs else [(dir_path, [], os.listdir(dir_path))]:
+                for file in files:
+                    if any(file.endswith(ext) for ext in extensions):
+                        file_path = os.path.join(root, file)
+                        file_list.append(file_path)
 
             if shuffle:
                 np.random.shuffle(file_list)
@@ -126,11 +129,13 @@ class PardaLoader:
                         parent_dataset[item_name]["files"] = process_files(item_path, item["files"])
                 elif item_type == "tagdir":
                     parent_dataset[item_name] = {}
+                    
                     process_structure(item["labeldirs"], item_path, parent_dataset[item_name])
                     if "files" in item:
                         parent_dataset[item_name]["files"] = process_files(item_path, item["files"])
+
                 elif item_type == "labeldir":
-                    parent_dataset[item_name] = process_files(item_path, item["files"])
+                    parent_dataset[item_name] = process_files(item_path, item["files"],  item.get("isd", False))
 
         process_structure(self.structure, self.source_dir, dataset)
         return dataset
@@ -147,7 +152,9 @@ class PardaLoader:
         elif file_path.lower().endswith((".txt", ".csv")):
             text = self.load_text(file_path)
             return text
-        # Add more file types and preprocessing steps as needed
+        elif file_path.lower().endswith((".npz", ".npy")):
+            npz = self.load_npz(file_path)
+            return npz
 
     def load_image(self, file_path):
         image = Image.open(file_path)
@@ -158,6 +165,9 @@ class PardaLoader:
         with open(file_path, "r") as file:
             text = file.read()
         return text
+
+    def load_npz(self, file_path):
+        return np.load(file_path)
 
     def apply_transformations(self, image):
         for transformation in self.transformations:
@@ -266,7 +276,7 @@ if __name__ == '__main__':
         structure {
             subdir "images" {
                 tagdir "train" {
-                    labeldir "label1" {
+                    labeldir "label1" isd {
                         files ".jpg" ".png" ".jpeg"
                     }
                     labeldir "label2" {
@@ -287,11 +297,12 @@ if __name__ == '__main__':
     }
     '''
 
-    loader = DatasetLoader(dataset_definition)
+    loader = PardaLoader(dataset_definition)
     loader.parse()
 
     # Load the dataset
-    dataset = loader.load_dataset(generator=False, batch_size=32, shuffle=True, num_workers=4, max_files_per_dir=100)
+    dataset = loader.load_dataset(generator=True, batch_size=4, shuffle=True, num_workers=4, max_files_per_dir=100)
+    breakpoint()
     # Get dataset information
     info = loader.get_dataset_info()
     print("Dataset Information:")
